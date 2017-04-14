@@ -1,4 +1,5 @@
 # coding: utf-8
+import codecs
 import collections
 import gzip
 import os
@@ -25,14 +26,14 @@ def split_sentence(s):
 
 def open_file(path):
     if path.endswith('.gz'):
-        return gzip.open(path)
+        return gzip.open(path, 'rt', 'utf-8')
     else:
         # Find gzipped version of the file
         gz = path + '.gz'
         if os.path.exists(gz):
             return open_file(gz)
         else:
-            return open(path)
+            return codecs.open(path, encoding='utf-8')
 
 
 def count_lines(path):
