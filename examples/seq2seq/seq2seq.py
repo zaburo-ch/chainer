@@ -17,6 +17,7 @@ from chainer import training
 from chainer.training import extensions
 
 import europal
+import seq2seq_attn
 
 
 def sequence_embed(embed, xs):
@@ -207,7 +208,8 @@ def main():
     target_words = {i: w for w, i in target_ids.items()}
     source_words = {i: w for w, i in source_ids.items()}
 
-    model = Seq2seq(3, len(source_ids), len(target_ids), args.unit)
+    model = seq2seq_attn.Seq2seqAttention(
+        3, len(source_ids), len(target_ids), args.unit)
     if args.gpu >= 0:
         chainer.cuda.get_device(args.gpu).use()
         model.to_gpu(args.gpu)
