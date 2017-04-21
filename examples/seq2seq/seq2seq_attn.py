@@ -58,7 +58,7 @@ class Seq2seqAttention(chainer.Chain):
 
         inf = self.xp.zeros(hxs_zero.shape[0:2], 'f')
         for i, hx in enumerate(hxs):
-            inf[i, 0:hx.shape[0]] = -1000
+            inf[i, hx.shape[0]:] = -1000
 
         os = [os[i] for i in indices]
         os_t = F.transpose_sequence(os)
