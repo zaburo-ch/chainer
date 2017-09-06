@@ -291,10 +291,13 @@ class FixedBatchNormalization(function_node.FunctionNode):
             y = cuda.cupy.empty_like(x)
 
             libcudnn.batchNormalizationForwardInference(
-                handle, self.mode.get_cudnn_mode(), one.data, zero.data,
+                handle, mode.get_cudnn_mode(), one.data, zero.data,
                 x_desc.value, x.data.ptr, x_desc.value, y.data.ptr,
                 derivedBnDesc.value, gamma.data.ptr, beta.data.ptr,
                 mean.data.ptr, var.data.ptr, self.eps)
+
+            self.inv_var = xp.reciprocal(var)
+            self.inv_std = xp.sqrt(self.inv_var, dtype=self.inv_var.dtype)
         else:
             gamma = gamma[expander]
             beta = beta[expander]
