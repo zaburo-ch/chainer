@@ -271,6 +271,13 @@ class FixedBatchNormalization(function_node.FunctionNode):
         if mode.can_use_cudnn(xp, x.ndim):
             x = cuda.cupy.ascontiguousarray(x)
 
+            if x.ndim == 4 and head_ndim == 2:
+                # for convolutional layer
+                self.mode = libcudnn.CUDNN_BATCHNORM_SPATIAL
+            else:
+                # for linear layer
+                self.mode = libcudnn.CUDNN_BATCHNORM_PER_ACTIVATION
+
             gamma = cuda.cupy.ascontiguousarray(gamma)
             beta = cuda.cupy.ascontiguousarray(beta)
             dtype = x.dtype
