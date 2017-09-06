@@ -138,9 +138,12 @@ class BatchNormalization(link.Link):
             else:
                 decay = self.decay
 
-            func = batch_normalization.BatchNormalizationFunction(
+            # func = batch_normalization.BatchNormalizationFunction(
+            #     self.eps, self.avg_mean, self.avg_var, decay)
+            # ret = func(x, gamma, beta)
+            func = batch_normalization.BatchNormalization(
                 self.eps, self.avg_mean, self.avg_var, decay)
-            ret = func(x, gamma, beta)
+            ret = func.apply((x, gamma, beta))[0]
 
             self.avg_mean[:] = func.running_mean
             self.avg_var[:] = func.running_var
