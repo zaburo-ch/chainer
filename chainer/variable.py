@@ -809,7 +809,7 @@ Actual: {0}'''.format(type(data))
         """
         self._node.set_creator_node(fnode)
 
-    def backward(self, retain_grad=False, enable_double_backprop=False):
+    def backward(self, retain_grad=False, enable_double_backprop=False, stop_nodes=None):
         """Runs error backpropagation (a.k.a.\\  backprop) from this variable.
 
         On backprop, :meth:`FunctionNode.backward` is called on each
@@ -849,9 +849,9 @@ Actual: {0}'''.format(type(data))
 
         """
         with chainer.using_config('enable_backprop', enable_double_backprop):
-            self._backward_main(retain_grad)
+            self._backward_main(retain_grad, stop_nodes)
 
-    def _backward_main(self, retain_grad):
+    def _backward_main(self, retain_grad, stop_nodes=None):
         self._node._check_old_style_gradient()
         if self.creator_node is None:
             return
@@ -999,7 +999,8 @@ Actual: {0}'''.format(type(data))
                     x_var._grad_var = grads[x]
 
                 if x.creator_node is not None:
-                    add_cand(x.creator_node)
+                    if stop_nodes is None or x not in stop_nodes:
+                        add_cand(x.creator_node)
 
             del gxs  # to reduce memory usage
             if initial_device is not None:
